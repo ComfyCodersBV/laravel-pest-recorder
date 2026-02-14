@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "comfycodersbv/laravel-pest-recorder",
+    "description": "Laravel Pest Browsertest Recorder",
     "keywords": [
-        ":vendor_name",
+        "ComfyCoders BV",
         "laravel",
-        ":package_slug"
+        "laravel-pest-recorder"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/comfycodersbv/laravel-pest-recorder",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "ComfyCoders BV",
+            "email": "development@comfycoders.nl",
             "role": "Developer"
         }
     ],
@@ -30,18 +30,17 @@
         "pestphp/pest-plugin-laravel": "^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "spatie/laravel-ray": "^1.35"
+        "phpstan/phpstan-phpunit": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "ComfyCoders BV\\PestRecorder\\": "src/",
+            "ComfyCoders BV\\PestRecorder\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "ComfyCoders BV\\PestRecorder\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +62,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "ComfyCoders BV\\PestRecorder\\PestRecorderServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "PestRecorder": "ComfyCoders BV\\PestRecorder\\Facades\\PestRecorder"
             }
         }
     },
