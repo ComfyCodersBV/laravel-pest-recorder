@@ -1,33 +1,24 @@
 # Laravel Pest Browsertest Recorder
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/comfycodersbv/laravel-pest-recorder.svg?style=flat-square)](https://packagist.org/packages/comfycodersbv/laravel-pest-recorder)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/comfycodersbv/laravel-pest-recorder/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/comfycodersbv/laravel-pest-recorder/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/comfycodersbv/laravel-pest-recorder/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/comfycodersbv/laravel-pest-recorder/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/comfycodersbv/laravel-pest-recorder.svg?style=flat-square)](https://packagist.org/packages/comfycodersbv/laravel-pest-recorder)
+This package introduces the `php artisan pest:record` command which provides an interactive way to generate a base for your Pest Browsertests.
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Running this command allows you to perform actions in the browser which will be translated into Pest tests.
+This process works by using the `npx playwirght codegen` command. You van use the Codegen toolbar to add assertions:
 
-## Support us
+<img src="art/playwright-codegen-toolbar.png" alt="Playwrihght Codegen toolbar (assertions)" />
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-pest-recorder.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-pest-recorder)
+By default, a development server (`php artisan serve`) will be started, this can be disabled with the `--server=false` flag.
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
+After closing the browser you'll be prompted with a question if you want to expand an existing test file or create a new one, and to give your new test a name:
 
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+<img src="art/pest-recorder-cli-output.png" alt="Laravel Pest Recorder CLI output / questions" />
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require comfycodersbv/laravel-pest-recorder
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="laravel-pest-recorder-migrations"
-php artisan migrate
+composer require tranquil-tools/laravel-pest-recorder --dev
 ```
 
 You can publish the config file with:
@@ -36,24 +27,43 @@ You can publish the config file with:
 php artisan vendor:publish --tag="laravel-pest-recorder-config"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravel-pest-recorder-views"
-```
+This is the contents of the published config can be viewed [here](./config/pest-recorder.php).
 
 ## Usage
 
-```php
-$pestRecorder = new TranquilTools\PestRecorder();
-echo $pestRecorder->echoPhrase('Hello, ComfyCoders BV!');
+```cli
+php artisan pest:record
+```
+or:
+```cli
+php artisan pest:record
+    --env=testing
+    --url=http://localhost:8001
+    --server=true
+    --migrate=false
+    --viewport-size=1920,1080
+```
+
+## Available flags / options (with their default values)
+The environment variable, obliged when using --migrate=true
+```cli
+--env=testing
+```
+Provide an URL which will be opened in the browser as starting point for your tests
+```cli
+--url=http://localhost:8001
+```
+Starts a development server (php artisan serve) for the given environment, URL and port
+```cli
+--server=true
+```
+Run `php artisan migrate:fresh` before starting the server? Specifying --env=... is mandatory.
+```cli
+--migrate=false
+```
+Specify viewport dimensions for the browser
+```cli
+--viewport-size=1920,1080
 ```
 
 ## Testing
@@ -68,7 +78,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Pull requests are welcome!
 
 ## Security Vulnerabilities
 
@@ -76,8 +86,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [ComfyCoders BV](https://github.com/comfycodersbv)
-- [All Contributors](../../contributors)
+- [ComfyCoders BV](https://github.com/comfycodersbv) - https://comfycoders.nl
 
 ## License
 
