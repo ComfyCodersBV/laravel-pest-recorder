@@ -4,17 +4,72 @@ declare(strict_types=1);
 
 namespace TranquilTools\PestRecorder\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
+use TranquilTools\PestRecorder\Recorder\PlaywrightRecorder;
+use TranquilTools\PestRecorder\Events\EventCleaner;
+use TranquilTools\PestRecorder\Pest\PestTestBuilder;
+use TranquilTools\PestRecorder\Filesystem\PestTestWriter;
+use TranquilTools\PestRecorder\Environment\ServerManager;
+use TranquilTools\PestRecorder\Environment\DatabaseManager;
 
 class PestRecorderCommand extends Command
 {
-    public $signature = 'laravel-pest-recorder';
+    protected $signature = 'pest:record
+        { --url=http://localhost:8001 }
+        { --server=true }
+        { --migrate=false }
+        { --viewport-size=1920,1080 }';
 
-    public $description = 'My command';
+    protected $description = 'Record browser actions with Playwright and generate Pest test';
 
-    public function handle(): int
-    {
-        $this->comment('All done');
+    public function handle(
+        PlaywrightRecorder $recorder,
+        EventCleaner $cleaner,
+        PestTestBuilder $builder,
+        PestTestWriter $writer,
+        ServerManager $server,
+        DatabaseManager $database,
+    ): int {
+        if ($this->option('migrate') === 'true' && empty($this->option('env'))) {
+            $this->error('Please specify an environment like --env=testing');
+            return self::FAILURE;
+        }
+
+        $recorder->checkDependencies();
+
+        $url = $this->option('url');
+        $environment = $this->option('env') ?: 'testing';
+
+        try {
+            $database->migrateIfNeeded($this, $environment, $this->option('migrate'));
+        } catch (Exception $e) {
+            $this->error($e->getMessage());
+            return self::FAILURE;
+        }
+
+        $process = $server->startIfNeeded($this, $url, $environment, $this->option('server'));
+
+        try {
+            $events = $recorder->record($this, $url, $this->option('viewport-size'));
+
+            if (empty($events)) {
+                $this->error('No recording captured');
+                return self::FAILURE;
+            }
+
+            $file = $writer->chooseTestFile($this);
+            $title = (string) $this->ask('Test name (it(...))');
+
+            $events = $cleaner->clean($events);
+            $code = $builder->build($events, $title, $url);
+
+            $writer->write($file, $code);
+
+            $this->info("Test generated: tests/Browser/{$file}Test.php");
+        } finally {
+            $process?->stop(3, SIGINT);
+        }
 
         return self::SUCCESS;
     }
