@@ -27,12 +27,11 @@ class PestTestWriter
         return $choice;
     }
 
-    public function write(string $base, string $code): void
+    public function write(string $path, string $code): void
     {
-        $path = base_path("tests/Browser/{$base}Test.php");
-
         if (! file_exists($path)) {
             file_put_contents($path, "<?php\n\ndeclare(strict_types=1);\n\n{$code}\n");
+
             return;
         }
 
@@ -41,8 +40,10 @@ class PestTestWriter
 
     private function existingTests(): array
     {
-        $dir = base_path('tests/Browser');
-        if (! is_dir($dir)) return [];
+        $dir = base_path(config('pest-recorder.output_path'));
+        if (! is_dir($dir)) {
+            return [];
+        }
 
         return collect(File::allFiles($dir))
             ->filter(fn ($f) => str_ends_with($f->getFilename(), 'Test.php'))

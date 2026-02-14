@@ -6,6 +6,7 @@ namespace TranquilTools\PestRecorder\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use TranquilTools\PestRecorder\Environment\DatabaseManager;
 use TranquilTools\PestRecorder\Environment\ServerManager;
 use TranquilTools\PestRecorder\Events\EventCleaner;
@@ -68,13 +69,22 @@ class PestRecorderCommand extends Command
             $events = $cleaner->clean($events);
             $code = $builder->build($events, $title, $url);
 
-            $writer->write($file, $code);
+            $path = $this->getPath($file);
+            $writer->write($path, $code);
 
-            $this->info("Test generated: tests/Browser/{$file}Test.php");
+            $this->info('Test generated: ' . $path);
         } finally {
             $process?->stop(3, SIGINT);
         }
 
         return self::SUCCESS;
+    }
+
+    private function getPath(string $file): string
+    {
+        $fileName = Str::chopEnd($file, 'Test.php') . 'Test.php';
+        $path = Str::chopEnd(config('pest-recorder.output_path'), '/');
+
+        return base_path($path . '/' . $fileName);
     }
 }

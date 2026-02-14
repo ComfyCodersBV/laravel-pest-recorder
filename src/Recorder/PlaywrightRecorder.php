@@ -25,31 +25,18 @@ class PlaywrightRecorder
         }
     }
 
+
     public function record(Command $command, string $url, string $viewport): array
     {
-        $dir = storage_path('app/tmp');
-        if (! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
+        $file = $this->prepareTempFile();
 
-        $file = $dir . '/recording.jsonl';
-        @unlink($file);
-
-        $process = new Process([
-            'npx',
-            'playwright',
-            'codegen',
-            '--viewport-size=' . $viewport,
-            '--target=jsonl',
-            '--ignore-https-errors',
-            '--test-id-attribute=id',
-            '--output=' . $file,
-            $url,
-        ]);
+        $process = new Process(
+            PlaywrightCodegenCommand::build($url, $file, $viewport)
+        );
 
         $process->setTimeout(null);
 
-        $command->line('Recorder running — close browser when done...');
+        $command->line('Recorder running — close the browser to finish...');
         $process->run();
 
         if (! file_exists($file)) {
@@ -57,5 +44,19 @@ class PlaywrightRecorder
         }
 
         return new JsonlParser()->parse($file);
+    }
+
+    private function prepareTempFile(): string
+    {
+        $dir = storage_path('app/tmp');
+
+        if (! is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $file = $dir . '/recording.jsonl';
+        @unlink($file);
+
+        return $file;
     }
 }
