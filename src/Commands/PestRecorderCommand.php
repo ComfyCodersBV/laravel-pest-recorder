@@ -6,12 +6,12 @@ namespace TranquilTools\PestRecorder\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use TranquilTools\PestRecorder\Recorder\PlaywrightRecorder;
-use TranquilTools\PestRecorder\Events\EventCleaner;
-use TranquilTools\PestRecorder\Pest\PestTestBuilder;
-use TranquilTools\PestRecorder\Filesystem\PestTestWriter;
-use TranquilTools\PestRecorder\Environment\ServerManager;
 use TranquilTools\PestRecorder\Environment\DatabaseManager;
+use TranquilTools\PestRecorder\Environment\ServerManager;
+use TranquilTools\PestRecorder\Events\EventCleaner;
+use TranquilTools\PestRecorder\Filesystem\PestTestWriter;
+use TranquilTools\PestRecorder\Pest\PestTestBuilder;
+use TranquilTools\PestRecorder\Recorder\PlaywrightRecorder;
 
 class PestRecorderCommand extends Command
 {
@@ -30,9 +30,11 @@ class PestRecorderCommand extends Command
         PestTestWriter $writer,
         ServerManager $server,
         DatabaseManager $database,
-    ): int {
+    ): int
+    {
         if ($this->option('migrate') === 'true' && empty($this->option('env'))) {
             $this->error('Please specify an environment like --env=testing');
+
             return self::FAILURE;
         }
 
@@ -45,6 +47,7 @@ class PestRecorderCommand extends Command
             $database->migrateIfNeeded($this, $environment, $this->option('migrate'));
         } catch (Exception $e) {
             $this->error($e->getMessage());
+
             return self::FAILURE;
         }
 
@@ -55,6 +58,7 @@ class PestRecorderCommand extends Command
 
             if (empty($events)) {
                 $this->error('No recording captured');
+
                 return self::FAILURE;
             }
 
