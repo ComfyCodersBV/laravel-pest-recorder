@@ -34,8 +34,7 @@
     },
     "autoload": {
         "psr-4": {
-            "TranquilTools\\PestRecorder\\": "src/",
-            "TranquilTools\\PestRecorder\\Database\\Factories\\": "database/factories/"
+            "TranquilTools\\PestRecorder\\": "src/"
         }
     },
     "autoload-dev": {
@@ -63,10 +62,7 @@
         "laravel": {
             "providers": [
                 "TranquilTools\\PestRecorder\\PestRecorderServiceProvider"
-            ],
-            "aliases": {
-                "PestRecorder": "TranquilTools\\PestRecorder\\Facades\\PestRecorder"
-            }
+            ]
         }
     },
     "minimum-stability": "dev",
