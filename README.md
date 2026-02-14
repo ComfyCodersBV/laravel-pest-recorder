@@ -52,7 +52,7 @@ php artisan vendor:publish --tag="laravel-pest-recorder-views"
 ## Usage
 
 ```php
-$pestRecorder = new ComfyCoders BV\PestRecorder();
+$pestRecorder = new TranquilTools\PestRecorder();
 echo $pestRecorder->echoPhrase('Hello, ComfyCoders BV!');
 ```
 

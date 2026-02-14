@@ -1,16 +1,18 @@
 <?php
 
-namespace ComfyCoders BV\PestRecorder\Facades;
+declare(strict_types=1);
+
+namespace TranquilTools\PestRecorder\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \ComfyCoders BV\PestRecorder\PestRecorder
+ * @see \TranquilTools\PestRecorder\PestRecorder
  */
 class PestRecorder extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \ComfyCoders BV\PestRecorder\PestRecorder::class;
+        return \TranquilTools\PestRecorder\PestRecorder::class;
     }
 }

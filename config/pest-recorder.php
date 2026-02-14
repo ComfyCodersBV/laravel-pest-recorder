@@ -1,6 +1,8 @@
 <?php
 
-// config for ComfyCoders BV/PestRecorder
+declare(strict_types=1);
+
+// config for TranquilTools/PestRecorder
 return [
 
 ];

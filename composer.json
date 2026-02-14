@@ -34,13 +34,13 @@
     },
     "autoload": {
         "psr-4": {
-            "ComfyCoders BV\\PestRecorder\\": "src/",
-            "ComfyCoders BV\\PestRecorder\\Database\\Factories\\": "database/factories/"
+            "TranquilTools\\PestRecorder\\": "src/",
+            "TranquilTools\\PestRecorder\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ComfyCoders BV\\PestRecorder\\Tests\\": "tests/",
+            "TranquilTools\\PestRecorder\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -62,10 +62,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ComfyCoders BV\\PestRecorder\\PestRecorderServiceProvider"
+                "TranquilTools\\PestRecorder\\PestRecorderServiceProvider"
             ],
             "aliases": {
-                "PestRecorder": "ComfyCoders BV\\PestRecorder\\Facades\\PestRecorder"
+                "PestRecorder": "TranquilTools\\PestRecorder\\Facades\\PestRecorder"
             }
         }
     },

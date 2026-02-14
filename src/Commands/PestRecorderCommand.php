@@ -1,6 +1,8 @@
 <?php
 
-namespace ComfyCoders BV\PestRecorder\Commands;
+declare(strict_types=1);
+
+namespace TranquilTools\PestRecorder\Commands;
 
 use Illuminate\Console\Command;
 

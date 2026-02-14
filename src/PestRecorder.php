@@ -1,5 +1,7 @@
 <?php
 
-namespace ComfyCoders BV\PestRecorder;
+declare(strict_types=1);
+
+namespace TranquilTools\PestRecorder;
 
 class PestRecorder {}

@@ -1,10 +1,12 @@
 <?php
 
-namespace ComfyCoders BV\PestRecorder\Tests;
+declare(strict_types=1);
+
+namespace TranquilTools\PestRecorder\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use ComfyCoders BV\PestRecorder\PestRecorderServiceProvider;
+use TranquilTools\PestRecorder\PestRecorderServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -13,7 +15,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'ComfyCoders BV\\PestRecorder\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'TranquilTools\\PestRecorder\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

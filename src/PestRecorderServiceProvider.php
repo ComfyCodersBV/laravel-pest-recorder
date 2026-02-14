@@ -1,10 +1,12 @@
 <?php
 
-namespace ComfyCoders BV\PestRecorder;
+declare(strict_types=1);
+
+namespace TranquilTools\PestRecorder;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use ComfyCoders BV\PestRecorder\Commands\PestRecorderCommand;
+use TranquilTools\PestRecorder\Commands\PestRecorderCommand;
 
 class PestRecorderServiceProvider extends PackageServiceProvider
 {
