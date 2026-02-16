@@ -83,7 +83,7 @@ class PestRecorderCommand extends Command
     private function getPath(string $file): string
     {
         $fileName = Str::chopEnd($file, 'Test.php') . 'Test.php';
-        $path = Str::chopEnd(config('pest-recorder.output_path'), '/');
+        $path = Str::chopEnd(config('pest-recorder.default_test_path'), '/');
 
         return base_path($path . '/' . $fileName);
     }

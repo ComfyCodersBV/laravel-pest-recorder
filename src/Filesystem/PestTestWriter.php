@@ -40,7 +40,8 @@ class PestTestWriter
 
     private function existingTests(): array
     {
-        $dir = base_path(config('pest-recorder.output_path'));
+        $dir = base_path(config('pest-recorder.default_test_path'));
+
         if (! is_dir($dir)) {
             return [];
         }
