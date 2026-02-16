@@ -38,6 +38,7 @@ readonly class PestTestBuilder
             $blocks[] = $this->renderChain($chain);
         }
 
+        $title = preg_replace("/(?<!\\\\)'/", "\\'", $title);
         $body = implode("\n\n    ", $blocks);
 
         return <<<PHP
