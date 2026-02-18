@@ -3,9 +3,9 @@
 This package introduces the `php artisan pest:record` command which provides an interactive way to generate a base for your Pest Browsertests.
 
 Running this command allows you to perform actions in the browser which will be translated into Pest tests.
-This process works by using the `npx playwirght codegen` command. You van use the Codegen toolbar to add assertions:
+This process works by using the `npx playwirght codegen` command. You can use the Codegen toolbar to add assertions:
 
-<img src="art/playwright-codegen-toolbar.png" alt="Playwrihght Codegen toolbar (assertions)" />
+<img src="art/playwright-codegen-toolbar.png" alt="Playwright Codegen toolbar (assertions)" />
 
 By default, a development server (`php artisan serve`) will be started, this can be disabled with the `--server=false` flag.
 
@@ -40,7 +40,8 @@ php artisan pest:record
     --env=testing
     --url=http://localhost:8001
     --server=true
-    --migrate=false
+    --migrate-fresh=false
+    --seed=false
     --viewport-size=1920,1080
 ```
 
@@ -49,19 +50,24 @@ The environment variable, obliged when using --migrate=true
 ```cli
 --env=testing
 ```
-Provide an URL which will be opened in the browser as starting point for your tests
+Provide a URL which will be opened in the browser as starting point for your tests.
+When omitted, your .env APP_URL setting will be used.
 ```cli
 --url=http://localhost:8001
 ```
-Starts a development server (php artisan serve) for the given environment, URL and port
+Starts a development server (php artisan serve) for the given environment, URL and port.
 ```cli
 --server=true
 ```
 Run `php artisan migrate:fresh` before starting the server? Specifying --env=... is mandatory.
 ```cli
---migrate=false
+--migrate-fresh=false
 ```
-Specify viewport dimensions for the browser
+Do you want to seed the database after migrate:fresh? This option is only available when using `--migrate-fresh=true`.
+```cli
+--seed=false
+```
+Specify viewport dimensions for the browser.
 ```cli
 --viewport-size=1920,1080
 ```

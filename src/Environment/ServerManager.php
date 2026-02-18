@@ -12,11 +12,11 @@ class ServerManager
     public function startIfNeeded(
         Command $command,
         string $url,
-        string $env,
-        string $enabled
+        string $environment,
+        bool $enabled
     ): ?Process
     {
-        if ($enabled !== 'true') {
+        if (! $enabled) {
             return null;
         }
 
@@ -27,7 +27,7 @@ class ServerManager
             'artisan',
             'serve',
             '--port=' . $port,
-            '--env=' . $env,
+            '--env=' . $environment,
         ]);
 
         $process->setTimeout(null);

@@ -17,9 +17,10 @@ use TranquilTools\PestRecorder\Recorder\PlaywrightRecorder;
 class PestRecorderCommand extends Command
 {
     protected $signature = 'pest:record
-        { --url=http://localhost:8001 }
-        { --server=true }
-        { --migrate=false }
+        { --url=default : By default the APP_URL from your .env will be used. You may provide a URL and port: http://localhost:8001 }
+        { --server=true : Starts a development server process (php artisan serve) }
+        { --migrate-fresh=false }
+        { --seed=false }
         { --viewport-size=1920,1080 }';
 
     protected $description = 'Record browser actions with Playwright and generate Pest test';
@@ -33,26 +34,20 @@ class PestRecorderCommand extends Command
         DatabaseManager $database,
     ): int
     {
-        if ($this->option('migrate') === 'true' && empty($this->option('env'))) {
-            $this->error('Please specify an environment like --env=testing');
-
-            return self::FAILURE;
-        }
-
         $recorder->checkDependencies();
 
-        $url = $this->option('url');
+        $url = $this->option('url') !== 'default' ? $this->option('url') : config('app.url', 'http://localhost:8001');
         $environment = $this->option('env') ?: 'testing';
 
         try {
-            $database->migrateIfNeeded($this, $environment, $this->option('migrate'));
+            $database->migrateIfNeeded($this, $environment, $this->option('migrate-fresh') === 'true');
         } catch (Exception $e) {
             $this->error($e->getMessage());
 
             return self::FAILURE;
         }
 
-        $process = $server->startIfNeeded($this, $url, $environment, $this->option('server'));
+        $process = $server->startIfNeeded($this, $url, $environment, $this->option('server') === 'true');
 
         try {
             $events = $recorder->record($this, $url, $this->option('viewport-size'));
