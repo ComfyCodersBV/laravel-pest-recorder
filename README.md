@@ -27,7 +27,7 @@ You can publish the config file with:
 php artisan vendor:publish --tag="laravel-pest-recorder-config"
 ```
 
-This is the contents of the published config can be viewed [here](./config/pest-recorder.php).
+The content of the published config can be viewed [here](./config/pest-recorder.php).
 
 ## Usage
 
