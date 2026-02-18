@@ -45,8 +45,8 @@ php artisan pest:record
     --viewport-size=1920,1080
 ```
 
-## Available flags / options (with their default values)
-The environment variable, obliged when using --migrate=true
+## Available flags / options
+The environment variable, obliged when using --migrate-fresh=true
 ```cli
 --env=testing
 ```
