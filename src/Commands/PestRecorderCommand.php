@@ -12,6 +12,7 @@ use TranquilTools\PestRecorder\Environment\ServerManager;
 use TranquilTools\PestRecorder\Events\EventCleaner;
 use TranquilTools\PestRecorder\Filesystem\PestTestWriter;
 use TranquilTools\PestRecorder\Pest\PestTestBuilder;
+use TranquilTools\PestRecorder\Recorder\JsonlParser;
 use TranquilTools\PestRecorder\Recorder\PlaywrightRecorder;
 
 class PestRecorderCommand extends Command
@@ -19,6 +20,7 @@ class PestRecorderCommand extends Command
     protected $signature = 'pest:record
         { --url=default : By default the APP_URL from your .env will be used. You may provide a URL and port: http://localhost:8001 }
         { --visit= : URI path to open when the recording browser starts (e.g. /events/123) }
+        { --acting-as= : Named auth state (e.g. --acting-as=user). Saves/loads browser storage from storage/app/tmp/auth/{name}.json and inserts $this->actingAs() in the generated test }
         { --server=true : Starts a development server process (php artisan serve) }
         { --migrate-fresh=false }
         { --seed=false }
@@ -51,7 +53,9 @@ class PestRecorderCommand extends Command
         $process = $server->startIfNeeded($this, $url, $environment, $this->option('server') === 'true');
 
         try {
-            $events = $recorder->record($this, $url, $this->option('viewport-size'), $this->option('visit'));
+            $loadStorage = $this->resolveActingAs($recorder, $url);
+
+            $events = $recorder->record($this, $url, $this->option('viewport-size'), $this->option('visit'), $loadStorage);
 
             if (empty($events)) {
                 $this->error('No recording captured');
@@ -63,7 +67,7 @@ class PestRecorderCommand extends Command
             $title = (string) $this->ask('Test name (it(...))');
 
             $events = $cleaner->clean($events);
-            $code = $builder->build($events, $title, $url);
+            $code = $builder->build($events, $title, $url, $this->option('acting-as') !== null);
 
             $path = $this->getPath($file);
             $writer->write($path, $code);
@@ -74,6 +78,30 @@ class PestRecorderCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    private function resolveActingAs(PlaywrightRecorder $recorder, string $url): ?string
+    {
+        $name = $this->option('acting-as');
+
+        if (! $name) {
+            return null;
+        }
+
+        $storagePath = storage_path(
+            rtrim(config('pest-recorder.acting_as_storage_path', 'app/tmp/auth'), '/') . '/' . $name . '.json'
+        );
+
+        if (! file_exists($storagePath)) {
+            if (! $this->confirm("No auth state found for '{$name}'. Record a login sequence now?", true)) {
+                return null;
+            }
+
+            $loginPath = config('pest-recorder.acting_as_login_path', '/login');
+            $recorder->recordActingAs($this, $url, $this->option('viewport-size'), $loginPath, $storagePath);
+        }
+
+        return file_exists($storagePath) ? $storagePath : null;
     }
 
     private function getPath(string $file): string

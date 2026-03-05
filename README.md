@@ -40,6 +40,7 @@ php artisan pest:record
     --env=testing
     --url=http://localhost:8001
     --visit=/login
+    --acting-as=user
     --server=true
     --migrate-fresh=false
     --seed=false
@@ -51,28 +52,57 @@ The environment variable, obliged when using --migrate-fresh=true
 ```cli
 --env=testing
 ```
+
 Provide a URL which will be opened in the browser as starting point for your tests.
 When omitted, your .env APP_URL setting will be used.
 ```cli
 --url=http://localhost:8001
 ```
+
 Open a specific URI path when the recording browser starts. The path is appended to the base URL.
 The initial navigation will automatically generate `$page = visit('/...');` in the test.
 ```cli
 --visit=/login
 ```
-Starts a development server (php artisan serve) for the given environment, URL and port.
+
+Record and store Playwright browser auth state under a named key (e.g. `user`). The state is saved
+to `storage/app/tmp/auth/{name}.json` (configurable via `acting_as_storage_path` in the config).
+
+- **First run (no file yet):** you will be prompted to record a login sequence. A browser opens at
+  `acting_as_login_path` (default `/login`); log in and close it — the browser storage state is saved.
+- **Subsequent runs (file exists):** the saved state is loaded automatically, so the browser starts
+  pre-authenticated and you can skip straight to recording the feature you want to test.
+- **Generated test:** `$this->actingAs(\App\Models\User::factory()->create());` is prepended to the
+  `it()` block. Authentication during the actual test run is handled by Laravel's `actingAs()`, not
+  by replaying browser login steps.
+
+```php
+it('test name', function () {
+    $this->actingAs(\App\Models\User::factory()->create());
+
+    $page = visit('/dashboard');
+    $page->assertSee('...');
+});
+```
+```cli
+--acting-as=user
+```
+
+Start a development server (php artisan serve) for the given environment, URL and port.
 ```cli
 --server=true
 ```
+
 Run `php artisan migrate:fresh` before starting the server? Specifying --env=... is mandatory.
 ```cli
 --migrate-fresh=false
 ```
-Do you want to seed the database after migrate:fresh? This option is only available when using `--migrate-fresh=true`.
+
+Seed the database after migrate:fresh? This option is only available when using `--migrate-fresh=true`.
 ```cli
 --seed=false
 ```
+
 Specify viewport dimensions for the browser.
 ```cli
 --viewport-size=1920,1080

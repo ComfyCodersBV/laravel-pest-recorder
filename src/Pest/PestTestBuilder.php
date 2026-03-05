@@ -10,7 +10,7 @@ readonly class PestTestBuilder
         private PestActionMapper $mapper
     ) {}
 
-    public function build(array $events, string $title, string $baseUrl): string
+    public function build(array $events, string $title, string $baseUrl, bool $actingAs = false): string
     {
         $blocks = [];
         $chain = [];
@@ -39,6 +39,11 @@ readonly class PestTestBuilder
         }
 
         $title = preg_replace("/(?<!\\\\)'/", "\\'", $title);
+
+        if ($actingAs) {
+            array_unshift($blocks, '$this->actingAs(\App\Models\User::factory()->create());');
+        }
+
         $body = implode("\n\n    ", $blocks);
 
         return <<<PHP

@@ -26,12 +26,12 @@ class PlaywrightRecorder
     }
 
 
-    public function record(Command $command, string $url, string $viewport, ?string $visitPath = null): array
+    public function record(Command $command, string $url, string $viewport, ?string $visitPath = null, ?string $loadStorage = null): array
     {
         $file = $this->prepareTempFile();
 
         $process = new Process(
-            PlaywrightCodegenCommand::build($url, $file, $viewport, $visitPath)
+            PlaywrightCodegenCommand::build($url, $file, $viewport, $visitPath, null, $loadStorage)
         );
 
         $process->setTimeout(null);
@@ -44,6 +44,26 @@ class PlaywrightRecorder
         }
 
         return new JsonlParser()->parse($file);
+    }
+
+    public function recordActingAs(Command $command, string $url, string $viewport, string $loginPath, string $storageFile): void
+    {
+        $dir = dirname($storageFile);
+
+        if (! is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $file = $this->prepareTempFile();
+
+        $process = new Process(
+            PlaywrightCodegenCommand::build($url, $file, $viewport, $loginPath, $storageFile)
+        );
+
+        $process->setTimeout(null);
+
+        $command->line('Login recorder running — log in and close the browser to save...');
+        $process->run();
     }
 
     private function prepareTempFile(): string

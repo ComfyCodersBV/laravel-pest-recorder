@@ -35,6 +35,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Acting-as storage path
+    |--------------------------------------------------------------------------
+    |
+    | Directory where named auth state files (JSON) are stored when using
+    | the --acting-as flag. The path is relative to the Laravel storage path.
+    |
+    */
+    'acting_as_storage_path' => 'app/tmp/auth',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Acting-as login path
+    |--------------------------------------------------------------------------
+    |
+    | The URI path opened in the browser when recording a login sequence
+    | for the first time (i.e. when no auth state file exists yet).
+    |
+    */
+    'acting_as_login_path' => '/login',
+
+    /*
+    |--------------------------------------------------------------------------
     | Driver-specific configuration
     |--------------------------------------------------------------------------
     |
