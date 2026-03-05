@@ -6,7 +6,7 @@ namespace TranquilTools\PestRecorder\Recorder;
 
 final class PlaywrightCodegenCommand
 {
-    public static function build(string $url, string $file, string $viewport): array
+    public static function build(string $url, string $file, string $viewport, ?string $visitPath = null): array
     {
         $command = [
             'npx',
@@ -22,7 +22,11 @@ final class PlaywrightCodegenCommand
             $command[] = '--ignore-https-errors';
         }
 
-        $command[] = $url;
+        $startUrl = $visitPath
+            ? rtrim($url, '/') . '/' . ltrim($visitPath, '/')
+            : $url;
+
+        $command[] = $startUrl;
 
         return $command;
     }

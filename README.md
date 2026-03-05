@@ -39,6 +39,7 @@ or:
 php artisan pest:record
     --env=testing
     --url=http://localhost:8001
+    --visit=/login
     --server=true
     --migrate-fresh=false
     --seed=false
@@ -54,6 +55,11 @@ Provide a URL which will be opened in the browser as starting point for your tes
 When omitted, your .env APP_URL setting will be used.
 ```cli
 --url=http://localhost:8001
+```
+Open a specific URI path when the recording browser starts. The path is appended to the base URL.
+The initial navigation will automatically generate `$page = visit('/...');` in the test.
+```cli
+--visit=/login
 ```
 Starts a development server (php artisan serve) for the given environment, URL and port.
 ```cli

@@ -18,6 +18,7 @@ class PestRecorderCommand extends Command
 {
     protected $signature = 'pest:record
         { --url=default : By default the APP_URL from your .env will be used. You may provide a URL and port: http://localhost:8001 }
+        { --visit= : URI path to open when the recording browser starts (e.g. /events/123) }
         { --server=true : Starts a development server process (php artisan serve) }
         { --migrate-fresh=false }
         { --seed=false }
@@ -50,7 +51,7 @@ class PestRecorderCommand extends Command
         $process = $server->startIfNeeded($this, $url, $environment, $this->option('server') === 'true');
 
         try {
-            $events = $recorder->record($this, $url, $this->option('viewport-size'));
+            $events = $recorder->record($this, $url, $this->option('viewport-size'), $this->option('visit'));
 
             if (empty($events)) {
                 $this->error('No recording captured');
