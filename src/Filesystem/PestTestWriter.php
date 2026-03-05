@@ -30,6 +30,8 @@ class PestTestWriter
     public function write(string $path, string $code): void
     {
         if (! file_exists($path)) {
+            File::ensureDirectoryExists(dirname($path));
+
             file_put_contents($path, "<?php\n\ndeclare(strict_types=1);\n\n{$code}\n");
 
             return;
