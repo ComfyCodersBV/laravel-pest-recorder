@@ -42,6 +42,9 @@ return [
     | the --acting-as flag. The path is relative to the Laravel storage path.
     |
     */
+    'browser_chrome_width_margin' => 30,
+    'browser_chrome_height_margin' => 70,
+
     'acting_as_storage_path' => 'app/tmp/auth',
 
     /*

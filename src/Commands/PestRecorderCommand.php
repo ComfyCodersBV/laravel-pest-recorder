@@ -8,23 +8,24 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use TranquilTools\PestRecorder\Environment\DatabaseManager;
+use TranquilTools\PestRecorder\Environment\ScreenResolutionDetector;
 use TranquilTools\PestRecorder\Environment\ServerManager;
 use TranquilTools\PestRecorder\Events\EventCleaner;
 use TranquilTools\PestRecorder\Filesystem\PestTestWriter;
 use TranquilTools\PestRecorder\Pest\PestTestBuilder;
-use TranquilTools\PestRecorder\Recorder\JsonlParser;
 use TranquilTools\PestRecorder\Recorder\PlaywrightRecorder;
 
 class PestRecorderCommand extends Command
 {
     protected $signature = 'pest:record
         { --url=default : By default the APP_URL from your .env will be used. You may provide a URL and port: http://localhost:8001 }
-        { --visit= : URI path to open when the recording browser starts (e.g. /events/123) }
+        { --visit=/ : URI path to open when the recording browser starts (e.g. /dashboard or /login) }
         { --acting-as= : Named auth state (e.g. --acting-as=user). Saves/loads browser storage from storage/app/tmp/auth/{name}.json and inserts $this->actingAs() in the generated test }
         { --server=true : Starts a development server process (php artisan serve) }
-        { --migrate-fresh=false }
-        { --seed=false }
-        { --viewport-size=1920,1080 }';
+        { --migrate-fresh=false : Run `php artisan migrate:fresh`? Please specify --env=... as well }
+        { --seed=false : Run `php artisan db:seed`? }
+        { --viewport-size=fullscreen : Viewport dimensions (e.g. 1280,720) or "fullscreen" to detect the primary screen resolution }
+        { --device= : Emulate a device (e.g. "iPhone 17"). Overrides --viewport-size. Run `npx playwright codegen --help` for the full list }';
 
     protected $description = 'Record browser actions with Playwright and generate Pest test';
 
@@ -54,8 +55,9 @@ class PestRecorderCommand extends Command
 
         try {
             $loadStorage = $this->resolveActingAs($recorder, $url);
+            $viewport = $this->option('device') ? null : $this->resolveViewport();
 
-            $events = $recorder->record($this, $url, $this->option('viewport-size'), $this->option('visit'), $loadStorage);
+            $events = $recorder->record($this, $url, $viewport, $this->option('visit'), $loadStorage, $this->option('device'));
 
             if (empty($events)) {
                 $this->error('No recording captured');
@@ -98,10 +100,34 @@ class PestRecorderCommand extends Command
             }
 
             $loginPath = config('pest-recorder.acting_as_login_path', '/login');
-            $recorder->recordActingAs($this, $url, $this->option('viewport-size'), $loginPath, $storagePath);
+            $recorder->recordActingAs($this, $url, $this->resolveViewport(), $loginPath, $storagePath);
         }
 
         return file_exists($storagePath) ? $storagePath : null;
+    }
+
+    private function resolveViewport(): string
+    {
+        if ($this->option('viewport-size') !== 'fullscreen') {
+            return $this->option('viewport-size');
+        }
+
+        $detected = (new ScreenResolutionDetector)->detect();
+
+        if ($detected) {
+            $this->info('Using detected screen resolution of ' . $detected . ' (minus margings)');
+
+            [$w, $h] = explode(',', $detected);
+            $detected = ((int) $w - (int) config('pest-recorder.browser_chrome_width_margin', 0))
+                . ','
+                . ((int) $h - (int) config('pest-recorder.browser_chrome_height_margin', 0));
+
+            return $detected;
+        }
+
+        $this->warn('Could not detect screen resolution, falling back to 1920,1080.');
+
+        return '1920,1080';
     }
 
     private function getPath(string $file): string

@@ -44,7 +44,7 @@ php artisan pest:record
     --server=true
     --migrate-fresh=false
     --seed=false
-    --viewport-size=1920,1080
+    --viewport-size=fullscreen
 ```
 
 ## Available flags / options
@@ -71,7 +71,7 @@ to `storage/app/tmp/auth/{name}.json` (configurable via `acting_as_storage_path`
 - **First run (no file yet):** you will be prompted to record a login sequence. A browser opens at
   `acting_as_login_path` (default `/login`); log in and close it — the browser storage state is saved.
 - **Subsequent runs (file exists):** the saved state is loaded automatically, so the browser starts
-  pre-authenticated and you can skip straight to recording the feature you want to test.
+  pre-authenticated, and you can skip straight to recording the feature you want to test.
 - **Generated test:** `$this->actingAs(\App\Models\User::factory()->create());` is prepended to the
   `it()` block. Authentication during the actual test run is handled by Laravel's `actingAs()`, not
   by replaying browser login steps.
@@ -103,9 +103,19 @@ Seed the database after migrate:fresh? This option is only available when using 
 --seed=false
 ```
 
-Specify viewport dimensions for the browser.
+Set the viewport dimensions, or use `fullscreen` (the default) to detect the primary screen resolution.
+Detected via `system_profiler` (macOS), `xdpyinfo`/`xrandr` (Linux), or PowerShell (Windows).
+Falls back to `1920,1080` if detection fails. Ignored when `--device` is set.
 ```cli
---viewport-size=1920,1080
+--viewport-size=fullscreen  (default)
+--viewport-size=1280,720
+```
+
+Emulate a specific device, including its viewport, user agent and touch settings. Overrides `--viewport-size`.
+Run `npx playwright codegen --help` for the full list of supported device names.
+```cli
+--device="iPhone 15"
+--device="Pixel 7"
 ```
 
 ## Testing

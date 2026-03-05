@@ -26,12 +26,12 @@ class PlaywrightRecorder
     }
 
 
-    public function record(Command $command, string $url, string $viewport, ?string $visitPath = null, ?string $loadStorage = null): array
+    public function record(Command $command, string $url, ?string $viewport, ?string $visitPath = null, ?string $loadStorage = null, ?string $device = null): array
     {
         $file = $this->prepareTempFile();
 
         $process = new Process(
-            PlaywrightCodegenCommand::build($url, $file, $viewport, $visitPath, null, $loadStorage)
+            PlaywrightCodegenCommand::build($url, $file, $viewport, $visitPath, null, $loadStorage, $device)
         );
 
         $process->setTimeout(null);
