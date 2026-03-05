@@ -73,6 +73,10 @@ class SelectorResolver
             }
         }
 
+        if ($kind === 'default' && ! empty($locator['body'])) {
+            return $locator['body'];
+        }
+
         return null;
     }
 }
