@@ -21,6 +21,7 @@ readonly class PestActionMapper
             'fill' => $this->fill($e),
             'selectOption' => $this->select($e),
             'assertVisible' => $this->assertVisible($e),
+            'assertText' => $this->assertText($e),
             default => null,
         };
     }
@@ -53,6 +54,18 @@ readonly class PestActionMapper
     private function assertVisible(array $e): string
     {
         return "->assertSee('".($this->resolver->resolve($e) ?? '')."')";
+    }
+
+    private function assertText(array $e): string
+    {
+        $text = addslashes($e['text'] ?? '');
+        $selector = $this->resolver->resolve($e);
+
+        if ($selector) {
+            return "->assertSeeIn('{$selector}', '{$text}')";
+        }
+
+        return "->assertSee('{$text}')";
     }
 
     private function select(array $e): string
