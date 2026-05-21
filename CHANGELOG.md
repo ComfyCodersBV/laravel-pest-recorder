@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-pest-recorder` will be documented in this file.
 
+## 1.0.2 - 2026-05-21
+* Add Laravel 13 compatibility
+
 ## 1.0.1 - 2026-03-05
 * Ensure tests/Browser directory exists
 * Implement assertText -> assertSee method
