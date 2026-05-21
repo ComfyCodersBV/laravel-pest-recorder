@@ -21,7 +21,10 @@ class PlaywrightRecorder
         $process->run();
 
         if (! $process->isSuccessful()) {
-            throw new Exception('Playwright not found. Please run: npm install -D @playwright/test');
+            $stderr = trim($process->getErrorOutput());
+            $detail = $stderr !== '' ? "\n{$stderr}" : '';
+
+            throw new Exception('Playwright not found. Please run: npm install -D @playwright/test' . $detail);
         }
     }
 
@@ -38,6 +41,18 @@ class PlaywrightRecorder
 
         $command->line('Recorder running — close the browser to finish...');
         $process->run();
+
+        if (! $process->isSuccessful()) {
+            $stderr = trim($process->getErrorOutput());
+
+            if (str_contains($stderr, "Executable doesn't exist")) {
+                $command->error('Playwright browsers not installed. Run: npx playwright install');
+            } elseif ($stderr !== '') {
+                $command->error($stderr);
+            }
+
+            return [];
+        }
 
         if (! file_exists($file)) {
             return [];

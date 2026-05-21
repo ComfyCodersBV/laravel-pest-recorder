@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-pest-recorder` will be documented in this file.
 
+## 1.0.3 - 2026-05-21
+* Improve Playwright error output: surface stderr and detect missing browser installation
+* Wrap checkDependencies() in try/catch for clean error handling in PestRecorderCommand
+
 ## 1.0.2 - 2026-05-21
 * Add Laravel 13 compatibility
 

@@ -38,7 +38,13 @@ class PestRecorderCommand extends Command
         DatabaseManager $database,
     ): int
     {
-        $recorder->checkDependencies();
+        try {
+            $recorder->checkDependencies();
+        } catch (Exception $e) {
+            $this->error($e->getMessage());
+
+            return self::FAILURE;
+        }
 
         $url = $this->option('url') !== 'default' ? $this->option('url') : config('app.url', 'http://localhost:8001');
         $environment = $this->option('env') ?: 'testing';
@@ -60,8 +66,6 @@ class PestRecorderCommand extends Command
             $events = $recorder->record($this, $url, $viewport, $this->option('visit'), $loadStorage, $this->option('device'));
 
             if (empty($events)) {
-                $this->error('No recording captured');
-
                 return self::FAILURE;
             }
 
